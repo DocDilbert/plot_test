@@ -5,90 +5,27 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
-#include <getopt.h>
 #include "mainwindow.h"
-
+#include <cxxopts.hpp>
 
 int main(int argc, char* argv[]) 
 {
-    static int verbose_flag;
-    int c;
+    cxxopts::Options options("MyProgram", "One line description of MyProgram");
+    options.add_options()
+        ("d,debug", "Enable debugging") // a bool parameter
+        ("i,integer", "Int param", cxxopts::value<int>())
+        ("f,file", "File name", cxxopts::value<std::string>())
+        ("v,verbose", "Verbose output", cxxopts::value<bool>()->default_value("false"))
+        ("h,help", "Print usage")
+        ;
 
-    while (1)
+    auto result = options.parse(argc, argv);
+
+    if (result.count("help"))
     {
-        static struct option long_options[] =
-        {
-            {"verbose", ARG_NONE, &verbose_flag, 1},
-            {"brief",   ARG_NONE, &verbose_flag, 0},
-            {"add",     ARG_NONE, 0, 'a'},
-            {"append",  ARG_NONE, 0, 'b'},
-            {"delete",  ARG_REQ,  0, 'd'},
-            {"create",  ARG_REQ,  0, 'c'},
-            {"file",    ARG_REQ, 0 , 'f'},
-            { ARG_NULL , ARG_NULL , ARG_NULL , ARG_NULL }
-        };
-
-        int option_index = 0;
-        c = getopt_long(argc, argv, "abc:d:f:", long_options, &option_index);
-
-        // Check for end of operation or error
-        if (c == -1)
-            break;
-
-        // Handle options
-        switch (c)
-        {
-        case 0:
-            /* If this option set a flag, do nothing else now. */
-            if (long_options[option_index].flag != 0)
-                break;
-            printf("option %s", long_options[option_index].name);
-            if (optarg)
-                printf(" with arg %s", optarg);
-            printf("\n");
-            break;
-
-        case 'a':
-            printf("option -a\n");
-            break;
-
-        case 'b':
-            printf("option -b\n");
-            break;
-
-        case 'c':
-            printf("option -c with value `%s'\n", optarg);
-            break;
-
-        case 'd':
-            printf("option -d with value `%s'\n", optarg);
-            break;
-
-        case 'f':
-            printf("option -f with value `%s'\n", optarg);
-            break;
-
-        case '?':
-            /* getopt_long already printed an error message. */
-            break;
-
-        default:
-            abort();
-        }
+      std::cout << options.help() << std::endl;
+      exit(0);
     }
-
-    if (verbose_flag)
-        printf("verbose flag is set\n");
-
-
-    if (optind < argc)
-    {
-        printf("non-option ARGV-elements: ");
-        while (optind < argc) printf("%s ", argv[optind++]);
-        printf("\n");
-    }
-
-
 
     QApplication a(argc, argv);
     MainWindow w;
