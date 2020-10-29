@@ -20,15 +20,18 @@ add_executable(plot_test
 )
 
 find_path(QCUSTOMPLOT_INCLUDE_DIR qcustomplot.h)
-
 find_library(QCUSTOMPLOT_DEBUG_LIB qcustomplotd)
 find_library(QCUSTOMPLOT_LIB qcustomplot)
  
 
-include_directories(plot_test ${QCUSTOMPLOT_INCLUDE_DIR})
 
+include_directories(plot_test ${QCUSTOMPLOT_INCLUDE_DIR})
 target_link_libraries(plot_test PUBLIC debug ${QCUSTOMPLOT_DEBUG_LIB} )
 target_link_libraries(plot_test PUBLIC optimized ${QCUSTOMPLOT_LIB} )
+
+find_path(LIB_NOISE_INCLUDE noise)
+find_library(LIB_NOISE_LIB noise-static)
+target_link_libraries(plot_test PUBLIC ${LIB_NOISE_LIB} )
 
 
 target_link_libraries(plot_test PUBLIC Qt5::Widgets)
